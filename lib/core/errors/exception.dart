@@ -1,10 +1,8 @@
 import 'package:api_test/core/errors/failure.dart';
 import 'package:dio/dio.dart';
 
-
 class ServerFailure extends Failure {
   const ServerFailure(super.errorMessage);
-
 }
 
 class DioFailure {
@@ -20,10 +18,7 @@ class DioFailure {
         return const ServerFailure("Receive timeout");
 
       case DioExceptionType.badResponse:
-        return _handleResponse(
-          e.response?.statusCode,
-          e.response?.data,
-        );
+        return _handleResponse(e.response?.statusCode, e.response?.data);
 
       case DioExceptionType.cancel:
         return const ServerFailure("Request cancelled");
@@ -32,14 +27,11 @@ class DioFailure {
         return const ServerFailure("No Internet");
 
       default:
-        return const ServerFailure("Unexpected error");
+        return ServerFailure("Unexpected error ${e.response?.toString()}");
     }
   }
 
-  static ServerFailure _handleResponse(
-      int? statusCode,
-      dynamic data,
-  ) {
+  static ServerFailure _handleResponse(int? statusCode, dynamic data) {
     switch (statusCode) {
       case 400:
         return ServerFailure(data["message"]);
@@ -49,7 +41,10 @@ class DioFailure {
 
       case 404:
         return const ServerFailure("Not found");
-
+      case 422:
+        return ServerFailure(
+          data[0]["field"] + " " + data[0]["message"] ?? "Unprocessable entity",
+        );
       case 500:
         return const ServerFailure("Internal server error");
 

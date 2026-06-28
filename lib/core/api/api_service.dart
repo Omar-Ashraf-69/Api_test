@@ -1,7 +1,7 @@
 import 'package:api_test/core/api/end_points.dart';
 import 'package:api_test/features/home/data/models/user_model.dart';
 import 'package:dio/dio.dart';
-import 'package:retrofit/retrofit.dart';
+import 'package:retrofit/retrofit.dart' hide Headers;
 
 part 'api_service.g.dart';
 
@@ -13,7 +13,14 @@ abstract class ApiService {
   @GET(EndPoints.users)
   Future<List<UserModel>> getUsers();
 
-
   @GET("${EndPoints.users}/{id}")
   Future<UserModel> getUser(@Path("id") int userId);
+
+  @DELETE("${EndPoints.users}/{id}")
+  Future<void> deleteUser(@Path("id") int userId);
+
+  @POST(EndPoints.users)
+  Future<UserModel> createUser(
+    @Body() Map<String, dynamic> body);
+  
 }

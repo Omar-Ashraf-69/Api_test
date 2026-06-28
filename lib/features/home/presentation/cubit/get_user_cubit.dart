@@ -24,4 +24,5 @@ class GetUserCubit extends Cubit<GetUsersState> {
       (user) => emit(GetUsersState.userSuccess(user)),
     );
   }
+  
 }
